@@ -14,7 +14,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="search"
         options={{
-          title: 'Rechercher',
+          title: 'Vos rêves',
           tabBarIcon: ({ color }) => <Search color={color} size={22} />,
         }}
       />

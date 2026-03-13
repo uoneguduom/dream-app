@@ -37,6 +37,12 @@ export default function RootLayout() {
             headerRight: () => <ThemeToggle />,
           }}
         />
+        <Stack.Screen
+          name="modifier"
+          options={{
+            presentation: 'modal',
+          }}
+        />
       </Stack>
       <PortalHost />
     </ThemeProvider>

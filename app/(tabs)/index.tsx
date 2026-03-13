@@ -1,10 +1,12 @@
 import DescriptionForm from '@/components/forms/DescriptionForm';
 import PlacesForm from '@/components/forms/PlacesForm';
 import PeoplesForm from '@/components/forms/PeoplesForm';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useNavigation } from 'expo-router';
 import * as React from 'react';
 import { View } from 'react-native';
 import { ScrollView } from 'react-native';
+import uuid from 'react-native-uuid'
 
 export default function Screen() {
   const navigation = useNavigation();
@@ -18,8 +20,22 @@ export default function Screen() {
   const [step, setStep] = React.useState('description');
   const [dream, setDream] = React.useState({});
 
-  const submitDream = (data: object) => {
-    const finalDream = { ...dream, ...data };
+  const saveDream = async (dream: object) => {
+    const existing = await AsyncStorage.getItem('dreams');
+    const dreams = existing ? JSON.parse(existing) : [];
+    dreams.push(dream);
+    await AsyncStorage.setItem('dreams', JSON.stringify(dreams));
+  };
+
+  const submitDream = (data: { peoples: string[]; places?: string[]; [key: string]: any }) => {
+    const merged = { ...dream, ...data };
+    const finalDream = {
+      ...merged,
+      date: new Date().toLocaleDateString('fr-FR'),
+      keywords: [...(merged.places ?? []), ...(merged.peoples ?? [])],
+      id: uuid.v4()
+    };
+    saveDream(finalDream);
     console.log('Rêve enregistré :', finalDream);
   };
 
@@ -44,7 +60,10 @@ export default function Screen() {
             />
           )}
           {step === 'peoples' && (
-            <PeoplesForm onNext={(data) => submitDream({ ...dream, ...data })} />
+            <PeoplesForm onNext={(data) => {
+              submitDream({ ...dream, ...data })
+              setStep('description')
+            }} />
           )}
         </View>
       </ScrollView>

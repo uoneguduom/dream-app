@@ -20,7 +20,7 @@ export default function PlacesForm({ onNext }: { onNext: (data: { places: string
   };
 
   return (
-    <Card className="mt-5 w-11/12">
+    <Card className="mt-32 w-11/12">
       <CardHeader>
         <Text>Ou prenait place votre rêve ?</Text>
       </CardHeader>

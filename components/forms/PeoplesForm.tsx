@@ -21,7 +21,7 @@ export default function PeoplesForm({ onNext }: { onNext: (data: { peoples: stri
   };
 
   return (
-    <Card className="mt-5 w-11/12">
+    <Card className="mt-32 w-11/12">
       <CardHeader>
         <Text>Qui était présent dans votre rêve</Text>
       </CardHeader>

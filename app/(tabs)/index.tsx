@@ -1,24 +1,12 @@
-import { Button } from '@/components/ui/button';
-import { Icon } from '@/components/ui/icon';
-import { Text } from '@/components/ui/text';
-import { Link, useFocusEffect, useNavigation } from 'expo-router';
-import { MoonStarIcon, StarIcon, SunIcon } from 'lucide-react-native';
-import { useColorScheme } from 'nativewind';
+import DescriptionForm from '@/components/forms/DescriptionForm';
+import PlacesForm from '@/components/forms/PlacesForm';
+import PeoplesForm from '@/components/forms/PeoplesForm';
+import { useFocusEffect, useNavigation } from 'expo-router';
 import * as React from 'react';
-import { Image, type ImageStyle, View } from 'react-native';
-
-const LOGO = {
-  light: require('@/assets/images/react-native-reusables-light.png'),
-  dark: require('@/assets/images/react-native-reusables-dark.png'),
-};
-
-const IMAGE_STYLE: ImageStyle = {
-  height: 76,
-  width: 76,
-};
+import { View } from 'react-native';
+import { ScrollView } from 'react-native';
 
 export default function Screen() {
-  const { colorScheme } = useColorScheme();
   const navigation = useNavigation();
 
   useFocusEffect(
@@ -27,38 +15,39 @@ export default function Screen() {
     }, [navigation])
   );
 
+  const [step, setStep] = React.useState('description');
+  const [dream, setDream] = React.useState({});
+
+  const submitDream = (data: object) => {
+    const finalDream = { ...dream, ...data };
+    console.log('Rêve enregistré :', finalDream);
+  };
+
   return (
     <>
-      <View className="flex-1 items-center justify-center gap-8 p-4">
-        <Image source={LOGO[colorScheme ?? 'light']} style={IMAGE_STYLE} resizeMode="contain" />
-        <View className="gap-2 p-4">
-          <Text className="ios:text-foreground font-mono text-sm text-muted-foreground">
-            1. Edit <Text variant="code">app/index.tsx</Text> to get started.
-          </Text>
-          <Text className="ios:text-foreground font-mono text-sm text-muted-foreground">
-            2. Save to see your changes instantly.
-          </Text>
+      <ScrollView keyboardShouldPersistTaps="handled">
+        <View className="w-screen flex-1 items-center justify-center gap-8 p-4">
+          {step === 'description' && (
+            <DescriptionForm
+              onNext={(data) => {
+                setDream((prev) => ({ ...prev, ...data }));
+                setStep('places');
+              }}
+            />
+          )}
+          {step === 'places' && (
+            <PlacesForm
+              onNext={(data) => {
+                setDream((prev) => ({ ...prev, ...data }));
+                setStep('peoples');
+              }}
+            />
+          )}
+          {step === 'peoples' && (
+            <PeoplesForm onNext={(data) => submitDream({ ...dream, ...data })} />
+          )}
         </View>
-        <View className="flex-row gap-2">
-          <Link href="https://reactnativereusables.com" asChild>
-            <Button>
-              <Text>Browse the Docs</Text>
-            </Button>
-          </Link>
-          <Link href="https://github.com/founded-labs/react-native-reusables" asChild>
-            <Button variant="ghost">
-              <Text>Star the Repo</Text>
-              <Icon as={StarIcon} />
-            </Button>
-          </Link>
-        </View>
-      </View>
+      </ScrollView>
     </>
   );
 }
-
-const THEME_ICONS = {
-  light: SunIcon,
-  dark: MoonStarIcon,
-};
-

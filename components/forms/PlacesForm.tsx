@@ -5,30 +5,33 @@ import { Separator } from '../ui/separator';
 import { Input } from '../ui/input';
 import { View } from 'react-native';
 import { Icon } from '../ui/icon';
-import { Cross, X } from 'lucide-react-native';
+import { X } from 'lucide-react-native';
 import { Button } from '../ui/button';
 
 export default function PlacesForm({ onNext }: { onNext: (data: { places: string[] }) => void }) {
-  const [places, setPlaces] = React.useState([]);
+  const [places, setPlaces] = React.useState<string[]>([]);
   const [inputValue, setInputValue] = React.useState('');
 
-  const addPlace = (place) => {
-    return setPlaces([...places, place]);
+  const addPlace = (place: string) => {
+    const trimmed = place.trim();
+    if (trimmed) setPlaces([...places, trimmed]);
   };
-  const removePlace = (i) => {
+
+  const removePlace = (i: number) => {
     setPlaces(places.filter((_, idx) => idx !== i));
   };
 
   return (
-    <Card className="mt-32 w-11/12">
+    <Card className="mt-24 w-11/12">
       <CardHeader>
-        <Text>Ou prenait place votre rêve ?</Text>
+        <Text variant="large">📍 Lieux du rêve</Text>
+        <Text variant="muted">Étape 3 sur 4</Text>
       </CardHeader>
 
       <Separator />
 
-      <CardContent className="">
-        <Text>Ajouter les lieux de votre rêve</Text>
+      <CardContent className="gap-2">
+        <Text variant="small">Ajouter les lieux de votre rêve</Text>
         <Input
           placeholder="Nom du lieu"
           value={inputValue}
@@ -37,13 +40,14 @@ export default function PlacesForm({ onNext }: { onNext: (data: { places: string
             addPlace(e.nativeEvent.text);
             setInputValue('');
           }}
+          returnKeyType="done"
         />
-        <View className="pt-5">
+        <View className="gap-1 pt-1">
           {places.map((place, index) => (
-            <View className="flex-row items-center justify-between px-10">
-              <Text key={index}> - {place}</Text>
-              <Button variant="ghost" onPress={() => removePlace(index)}>
-                <Icon as={X} />
+            <View key={index} className="flex-row items-center justify-between px-2 py-0.5 rounded-lg bg-muted/40">
+              <Text className="text-sm">📍 {place}</Text>
+              <Button variant="ghost" onPress={() => removePlace(index)} className="h-8 w-8 p-0">
+                <Icon as={X} className="size-4" />
               </Button>
             </View>
           ))}
@@ -52,7 +56,7 @@ export default function PlacesForm({ onNext }: { onNext: (data: { places: string
 
       <CardFooter className="justify-end">
         <Button onPress={() => onNext({ places })}>
-          <Text>Suivant</Text>
+          <Text>Suivant →</Text>
         </Button>
       </CardFooter>
     </Card>
